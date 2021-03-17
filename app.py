@@ -44,38 +44,35 @@ def xml():
             return render_template('index.html', errors=errors)
         if r:
             # xml processing
-            tree = ET.fromstring(r.content)
-            try:
-                result = Result(
-                    url=url,
-                    result_all=raw_word_count,
-                    result_no_stop_words=no_stop_words_count
-                )
-                db.session.add(result)
-                db.session.commit()
-            except Exception as e:
-                errors.append("Unable to add item to database.")
-                errors.append(e)
+            root = ET.fromstring(r.content)
+            results = parseXml(root)
     
-    tree = ET.parse('201132069349300318_public.xml')
-    root = tree.getroot()
+    # tree = ET.parse('201132069349300318_public.xml')
+    # root = tree.getroot()
+    # results = parseXml(root)
+    return render_template('index.html', errors=errors, results=results)
+
+def parseXml(root):
+    errors = []
     filers = root.findall('.//irs:Filer',namespaces=namespaces)
     filerEin = ''
+    allRecipients = []
+    allFilers = []
     for filer in filers:
         if filer != None:
             currentFiler = getFilerData(filer)
             if len(currentFiler['errors']) > 0:
                 errors.append(currentFiler['errors'])
             filerEin = currentFiler['ein']
-            print(currentFiler)
+            allFilers.append(currentFiler)
     recipients = root.findall('.//irs:RecipientTable',namespaces=namespaces)
     for recipient in recipients:
         currentRecipient = getRecipientData(recipient,filerEin)
+        allRecipients.append(currentRecipient)
         if len(currentRecipient['errors']) > 0:
             errors.append(currentRecipient['errors'])
-        print(currentRecipient)
-
-    return render_template('index.html', errors=errors, results=results)
+    results = { 'recipients': allRecipients, 'filer': allFilers, 'errors': errors}
+    return results
 
 def getFilerData(filer):
     errors = []

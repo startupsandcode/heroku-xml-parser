@@ -59,8 +59,9 @@ def index():
                 )
                 db.session.add(result)
                 db.session.commit()
-            except:
+            except Exception as e:
                 errors.append("Unable to add item to database.")
+                errors.append(e)
     return render_template('index.html', errors=errors, results=results)
 
 

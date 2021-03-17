@@ -35,3 +35,11 @@ git push heroku main
 
 *Note: I changed the DB to POST_DB because of an issue with Heroku, it sets up the db config url incorrectly and does not allow you to change it.
 It uses a prefix of postgres rather than postgresql, simple typo, but will break your entire database. You will need to create a new environment variable on heroku for this to use the POST_DB*
+
+
+I also added sass compilation for the stylesheet and added AOS because it gives it subtle polish. ;-)
+
+To watch your sass files, install sass (brew or node, I used the dart version)
+```
+sass --watch static/styles
+```

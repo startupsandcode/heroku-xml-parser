@@ -19,7 +19,6 @@ api_conversion = 'https://api.exchangeratesapi.io/latest?base=USD&symbols=GBP'
 
 @app.before_request
 def before_request_func():
-    print("before_request is running!")
     r = requests.get(api_conversion)
     my_json = json.loads(r.content.decode('utf8').replace("'", '"'))
     g.gbp_rate = my_json["rates"]["GBP"]
